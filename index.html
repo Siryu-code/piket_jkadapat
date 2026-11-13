@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Piket Kelas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Halaman ini hanya mengarahkan: tidak ada tampilan -->
+  <script type="module">
+    import { me } from './js/api.js';
+    import { halamanUntukPeran, pindahHalaman } from './js/ui.js';
+
+    async function arahkan() {
+      const hasil = await me(); // 401 otomatis dialihkan ke login.html oleh api.js
+      pindahHalaman(hasil.ok ? halamanUntukPeran(hasil.data.role) : 'login.html');
+    }
+
+    arahkan();
+  </script>
+</body>
+</html>

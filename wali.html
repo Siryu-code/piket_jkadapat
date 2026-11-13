@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Piket Kelas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script type="module" src="js/wali.js"></script>
+</head>
+<body>
+  <main class="app">
+    <!-- Header dipasang oleh js/wali.js -->
+
+    <div class="wali-isi">
+
+      <!-- Baris tanggal dan ringkasan -->
+      <div class="baris-tanggal">
+        <div class="wadah-tanggal">
+          <button class="tombol-tanggal" id="tombol-tanggal" type="button">
+            <span id="teks-tanggal"></span>
+            <span id="ikon-tanggal"></span>
+          </button>
+          <!-- Pemilih tanggal bawaan browser, dibuka lewat tombol di atas -->
+          <input class="input-tanggal" id="input-tanggal" type="date" tabindex="-1" aria-hidden="true">
+        </div>
+        <span class="pill pill-garis" id="pill-ringkasan" hidden></span>
+      </div>
+
+      <p class="pesan-error" id="pesan-error" role="alert" hidden></p>
+
+      <!-- Catatan harian -->
+      <section class="blok-catatan">
+        <label class="label" for="input-catatan">Catatan hari ini</label>
+        <textarea class="textarea" id="input-catatan" rows="2"></textarea>
+        <div class="baris-simpan">
+          <button class="tombol tombol-utama tombol-kecil" id="tombol-simpan" type="button" disabled>Simpan</button>
+        </div>
+        <p class="pesan-error" id="pesan-catatan" role="alert" hidden></p>
+      </section>
+
+      <!-- Daftar siswa (kartu dibuat oleh js/wali.js) -->
+      <p class="teks-kosong" id="teks-kosong" hidden>Tidak ada jadwal piket pada hari ini.</p>
+      <ul class="daftar-siswa" id="daftar-siswa"></ul>
+
+    </div>
+  </main>
+
+  <!-- Popup foto -->
+  <div class="lapisan" id="lapisan-foto" hidden>
+    <div class="popup-foto" role="dialog" aria-modal="true" aria-label="Foto bukti piket">
+      <div class="pengisi-foto" id="pengisi-foto"></div>
+      <img class="gambar-penuh" id="gambar-popup" alt="Foto bukti piket" hidden>
+      <p class="teks-gagal-foto" id="gagal-foto" hidden>Foto tidak bisa dimuat</p>
+      <button class="tombol-tutup-popup" id="tombol-tutup-popup" type="button" aria-label="Tutup foto"></button>
+    </div>
+  </div>
+</body>
+</html>

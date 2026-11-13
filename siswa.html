@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Piket Kelas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script type="module" src="js/siswa.js"></script>
+</head>
+<body>
+  <main class="app">
+
+    <!-- View 1: home (header dipasang oleh js/siswa.js) -->
+    <section class="view" id="view-home">
+      <div class="home-tengah">
+        <h1 class="judul-tengah" id="judul-status"></h1>
+        <p class="caption" id="caption-sesi">Sesi potret dibuka pukul 05.00 sampai 17.00 WIB.</p>
+        <p class="pesan-error" id="pesan-error" role="alert" hidden></p>
+      </div>
+
+      <div class="home-bawah">
+        <!-- Baris info lokasi: tampil hanya saat tombol aktif -->
+        <p class="info-lokasi" id="info-lokasi" hidden>
+          <span class="titik-status" id="titik-lokasi"></span>
+          <span id="teks-lokasi"></span>
+        </p>
+        <!-- Ikon kamera dipasang oleh js/siswa.js -->
+        <button class="tombol tombol-utama tombol-penuh tombol-besar" id="tombol-foto" type="button" disabled>
+          <span>Ambil Foto</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- View 2: kamera layar penuh -->
+    <section class="view view-penuh view-kamera" id="view-kamera" hidden>
+      <video class="video-penuh" id="video-kamera" autoplay muted playsinline></video>
+
+      <!-- Petunjuk bila kamera gagal dibuka -->
+      <div class="pesan-kamera" id="pesan-kamera" hidden>
+        <p id="teks-pesan-kamera"></p>
+        <button class="tombol tombol-utama" id="tombol-kembali-kamera" type="button">Kembali</button>
+      </div>
+
+      <!-- Ikon dipasang oleh js/siswa.js -->
+      <button class="tombol-bulat" id="tombol-tutup-kamera" type="button" aria-label="Tutup kamera"></button>
+
+      <div class="kontrol-kamera" id="kontrol-kamera">
+        <button class="tombol-potret" id="tombol-potret" type="button" aria-label="Ambil foto"></button>
+        <button class="tombol-tukar" id="tombol-tukar" type="button" aria-label="Tukar kamera"></button>
+      </div>
+    </section>
+
+    <!-- View 3: foto + pesan + kirim -->
+    <section class="view view-penuh view-foto" id="view-foto" hidden>
+      <div class="area-foto">
+        <img class="gambar-penuh" id="gambar-foto" alt="Foto bukti piket">
+        <button class="tombol-bulat" id="tombol-buang-foto" type="button" aria-label="Buang foto"></button>
+      </div>
+
+      <form class="bar-bawah" id="form-kirim">
+        <p class="pesan-error" id="pesan-kirim" role="alert" hidden></p>
+        <div class="baris-kirim">
+          <label class="sr-only" for="input-pesan">Pesan (opsional)</label>
+          <input class="input input-besar" id="input-pesan" name="pesan" type="text"
+                 maxlength="200" autocomplete="off" placeholder="Tambahkan pesan (opsional)">
+          <button class="tombol tombol-utama tombol-kirim" id="tombol-kirim" type="submit" aria-label="Kirim foto"></button>
+        </div>
+      </form>
+    </section>
+
+  </main>
+</body>
+</html>

@@ -1,0 +1,843 @@
+/* ==========================================================
+   Piket Kelas - style.css
+   Flat design: tanpa gradasi, tanpa bayangan, tanpa blur.
+   Semua warna dan ukuran ada di variabel :root di bawah.
+   ========================================================== */
+
+:root {
+  /* Warna */
+  --warna-latar: #F9EEE1;
+  --warna-permukaan: #FFF9F2;
+  --warna-garis: #E8D8C4;
+  --warna-oranye: #E07B39;
+  --warna-oranye-tint: #F6DCC3;
+  --warna-teks: #2B1A0F;
+  --warna-teks-redup: #7B6554;
+  --warna-hijau: #5C9A68;       /* hanya untuk titik status lokasi */
+  --warna-merah: #C4553B;       /* hanya untuk teks pesan error */
+  --warna-kamera: #2B1A0F;      /* latar layar kamera */
+  --warna-lapisan: rgba(43, 26, 15, 0.6);  /* lapisan gelap popup: cokelat gelap 60% */
+
+  /* Font */
+  --font: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-kecil: 13px;
+  --font-sedang: 14px;
+  --font-isi: 16px;
+  --font-header: 18px;
+  --font-besar: 36px;
+  --font-judul-tengah: 24px;
+  --font-caption: 12px;
+
+  /* Bentuk */
+  --radius: 12px;
+  --radius-pill: 999px;
+  --garis: 1px;
+
+  /* Spasi (kelipatan 8 px; dua jarak kecil mengikuti screenshot) */
+  --spasi-1: 8px;
+  --spasi-2: 16px;
+  --spasi-3: 24px;
+  --spasi-4: 32px;
+  --spasi-5: 40px;
+  --spasi-halaman: 20px;        /* jarak kiri-kanan halaman (sesuai screenshot) */
+  --spasi-menu: 12px;           /* jarak ikon ke teks di menu (sesuai screenshot) */
+
+  /* Ukuran komponen */
+  --tinggi-kontrol: 48px;       /* tombol dan input */
+  --tinggi-kecil: 44px;         /* tombol kecil */
+  --tinggi-header: 64px;
+  --tinggi-besar: 56px;         /* tombol besar (Ambil Foto) */
+  --ukuran-titik: 8px;          /* titik status lokasi */
+  --lebar-maks: 480px;
+  --lebar-menu: 220px;
+}
+
+/* ---------- Reset sederhana ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  font-size: var(--font-isi);
+  line-height: 1.4;
+  color: var(--warna-teks);
+  background: var(--warna-latar);
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Elemen dengan atribut hidden selalu tersembunyi */
+[hidden] {
+  display: none !important;
+}
+
+/* Fokus keyboard terlihat jelas */
+:focus-visible {
+  outline: 2px solid var(--warna-oranye);
+  outline-offset: 2px;
+}
+
+/* ---------- Kerangka halaman ---------- */
+/* Lebar maksimal 480 px, di tengah, tinggi penuh, hormati safe-area */
+.app {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: var(--lebar-maks);
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding:
+    env(safe-area-inset-top)
+    env(safe-area-inset-right)
+    env(safe-area-inset-bottom)
+    env(safe-area-inset-left);
+}
+
+/* ---------- Tombol ---------- */
+.tombol {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spasi-1);
+  min-height: var(--tinggi-kontrol);
+  padding: 0 var(--spasi-3);
+  border: var(--garis) solid transparent;
+  border-radius: var(--radius);
+  font-size: var(--font-isi);
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* Tombol utama: oranye, teks cokelat gelap (bukan putih) */
+.tombol-utama {
+  background: var(--warna-oranye);
+  border-color: var(--warna-oranye);
+  color: var(--warna-teks);
+}
+
+/* Tombol outline */
+.tombol-outline {
+  background: var(--warna-permukaan);
+  border-color: var(--warna-garis);
+  color: var(--warna-teks);
+}
+
+/* Tombol kecil (minimal 44 px) */
+.tombol-kecil {
+  min-height: var(--tinggi-kecil);
+  padding: 0 var(--spasi-3);
+  font-size: var(--font-sedang);
+}
+
+.tombol-penuh {
+  width: 100%;
+}
+
+/* Tombol besar 56 px */
+.tombol-besar {
+  min-height: var(--tinggi-besar);
+}
+
+/* Tombol nonaktif: redup dan tidak bisa diklik */
+.tombol:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.tombol-utama:disabled {
+  background: var(--warna-oranye-tint);
+  border-color: var(--warna-oranye-tint);
+  color: var(--warna-teks-redup);
+  opacity: 0.8;
+}
+
+/* Tombol yang hanya berisi ikon (contoh: hamburger) */
+.tombol-ikon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--tinggi-kontrol);
+  height: var(--tinggi-kontrol);
+  padding: 0;
+  background: var(--warna-permukaan);
+  border: var(--garis) solid var(--warna-garis);
+  border-radius: var(--radius);
+  color: var(--warna-teks);
+}
+
+/* ---------- Input dengan label ---------- */
+.isian + .isian {
+  margin-top: var(--spasi-2);
+}
+
+.label {
+  display: block;
+  margin-bottom: var(--spasi-1);
+  font-size: var(--font-sedang);
+  font-weight: 600;
+}
+
+/* Font input 16 px supaya iPhone tidak memperbesar layar saat fokus */
+.input {
+  display: block;
+  width: 100%;
+  height: var(--tinggi-kontrol);
+  padding: 0 var(--spasi-2);
+  background: var(--warna-permukaan);
+  border: var(--garis) solid var(--warna-garis);
+  border-radius: var(--radius);
+  font-size: var(--font-isi);
+  color: var(--warna-teks);
+}
+
+.input::placeholder {
+  color: var(--warna-teks-redup);
+}
+
+/* Pembungkus input yang punya tombol di dalamnya (mata password) */
+.input-wadah {
+  position: relative;
+}
+
+.input-dengan-ikon {
+  padding-right: 56px;
+}
+
+.tombol-mata {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--tinggi-kecil);
+  height: var(--tinggi-kecil);
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius);
+  color: var(--warna-teks-redup);
+}
+
+/* ---------- Card ---------- */
+.kartu {
+  background: var(--warna-permukaan);
+  border: var(--garis) solid var(--warna-garis);
+  border-radius: var(--radius);
+  padding: var(--spasi-halaman);
+}
+
+/* ---------- Pill status ---------- */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 var(--spasi-2);
+  border: var(--garis) solid transparent;
+  border-radius: var(--radius-pill);
+  font-size: var(--font-kecil);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* Contoh: "4/6 sudah kirim" */
+.pill-garis {
+  border-color: var(--warna-teks-redup);
+  color: var(--warna-teks-redup);
+}
+
+/* Contoh: "Sudah kirim" */
+.pill-solid {
+  background: var(--warna-oranye);
+  color: var(--warna-teks);
+}
+
+/* Contoh: "Tidak kirim" */
+.pill-pucat {
+  background: var(--warna-oranye-tint);
+  color: var(--warna-teks-redup);
+}
+
+/* ---------- Header ---------- */
+.header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  height: var(--tinggi-header);
+  padding: 0 var(--spasi-halaman);
+  border-bottom: var(--garis) solid var(--warna-garis);
+}
+
+.header-judul {
+  font-size: var(--font-header);
+  font-weight: 500;
+}
+
+/* ---------- Panel menu (di bawah tombol hamburger) ---------- */
+.menu-wadah {
+  position: relative;
+}
+
+.menu-panel {
+  position: absolute;
+  top: calc(100% + var(--spasi-1));
+  right: 0;
+  z-index: 10;
+  width: var(--lebar-menu);
+  background: var(--warna-permukaan);
+  border: var(--garis) solid var(--warna-garis);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spasi-menu);
+  width: 100%;
+  min-height: var(--tinggi-kontrol);
+  padding: 0 var(--spasi-2);
+  background: transparent;
+  border: 0;
+  text-align: left;
+  font-size: var(--font-sedang);
+  color: var(--warna-teks);
+}
+
+.menu-item + .menu-item {
+  border-top: var(--garis) solid var(--warna-garis);
+}
+
+.menu-item:focus-visible {
+  outline-offset: -2px;
+}
+
+/* ---------- Halaman login ---------- */
+.login-isi {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 var(--spasi-halaman) var(--spasi-5);
+}
+
+.judul-besar {
+  margin-bottom: var(--spasi-3);
+  font-size: var(--font-besar);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.kartu .tombol-penuh {
+  margin-top: var(--spasi-3);
+}
+
+/* ---------- Tampilan (view) dalam satu halaman ---------- */
+.view {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+/* ---------- Home siswa ---------- */
+.home-tengah {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 var(--spasi-halaman);
+  text-align: center;
+}
+
+.judul-tengah {
+  font-size: var(--font-judul-tengah);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.caption {
+  margin-top: var(--spasi-menu);
+  font-size: var(--font-caption);
+  color: var(--warna-teks-redup);
+}
+
+.home-bawah {
+  padding: 0 var(--spasi-halaman) var(--spasi-halaman);
+}
+
+.info-lokasi {
+  display: flex;
+  align-items: center;
+  gap: var(--spasi-1);
+  margin-bottom: var(--spasi-1);
+  font-size: var(--font-sedang);
+}
+
+.info-lokasi-error {
+  color: var(--warna-merah);
+}
+
+.titik-status {
+  flex-shrink: 0;
+  width: var(--ukuran-titik);
+  height: var(--ukuran-titik);
+  border-radius: 50%;
+  background: var(--warna-hijau);
+}
+
+/* ---------- Tampilan layar penuh (kamera dan foto) ---------- */
+/* Menutupi seluruh layar (100dvh), tetap dibatasi lebar 480 px di tengah */
+.view-penuh {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 20;
+  width: 100%;
+  max-width: var(--lebar-maks);
+  height: 100dvh;
+  margin: 0 auto;
+  flex: none;
+}
+
+/* Tombol bulat (tutup): permukaan krem, ikon cokelat */
+.tombol-bulat {
+  position: absolute;
+  top: calc(var(--spasi-halaman) + env(safe-area-inset-top));
+  left: var(--spasi-halaman);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--tinggi-kontrol);
+  height: var(--tinggi-kontrol);
+  padding: 0;
+  background: var(--warna-permukaan);
+  border: 0;
+  border-radius: 50%;
+  color: var(--warna-teks);
+}
+
+/* ---------- Kamera ---------- */
+.view-kamera {
+  background: var(--warna-kamera);
+}
+
+.video-penuh {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: var(--warna-kamera);
+}
+
+.kontrol-kamera {
+  position: absolute;
+  right: 0;
+  bottom: calc(var(--spasi-5) + env(safe-area-inset-bottom));
+  left: 0;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+}
+
+/* Tombol potret: cincin krem dengan lingkaran di dalam */
+.tombol-potret {
+  grid-column: 2;
+  display: flex;
+  width: 72px;
+  height: 72px;
+  padding: 4px;
+  background: transparent;
+  border: 3px solid var(--warna-permukaan);
+  border-radius: 50%;
+}
+
+.tombol-potret::after {
+  content: '';
+  flex: 1;
+  border-radius: 50%;
+  background: var(--warna-permukaan);
+}
+
+/* Tombol tukar kamera: lingkaran garis krem */
+.tombol-tukar {
+  grid-column: 3;
+  justify-self: start;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--tinggi-kontrol);
+  height: var(--tinggi-kontrol);
+  margin-left: var(--spasi-4);
+  padding: 0;
+  background: transparent;
+  border: var(--garis) solid var(--warna-permukaan);
+  border-radius: 50%;
+  color: var(--warna-permukaan);
+}
+
+.tombol-tukar:disabled {
+  opacity: 0.4;
+}
+
+/* Petunjuk saat kamera gagal dibuka */
+.pesan-kamera {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spasi-3);
+  padding: 0 var(--spasi-halaman);
+  text-align: center;
+  color: var(--warna-permukaan);
+}
+
+/* ---------- Foto + bar bawah ---------- */
+.view-foto {
+  background: var(--warna-latar);
+}
+
+.area-foto {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  background: var(--warna-teks-redup);
+}
+
+.gambar-penuh {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bar-bawah {
+  flex-shrink: 0;
+  padding: var(--spasi-halaman) var(--spasi-halaman) calc(var(--spasi-halaman) + env(safe-area-inset-bottom));
+  background: var(--warna-latar);
+  border-top: var(--garis) solid var(--warna-garis);
+}
+
+.bar-bawah .pesan-error {
+  margin: 0 0 var(--spasi-menu);
+}
+
+.baris-kirim {
+  display: flex;
+  gap: var(--spasi-menu);
+}
+
+.input-besar {
+  flex: 1;
+  min-width: 0;
+  height: var(--tinggi-besar);
+}
+
+.tombol-kirim {
+  flex-shrink: 0;
+  width: var(--tinggi-besar);
+  height: var(--tinggi-besar);
+  padding: 0;
+}
+
+/* ---------- Halaman wali ---------- */
+.wali-isi {
+  flex: 1;
+  padding: var(--spasi-2) var(--spasi-halaman) var(--spasi-4);
+}
+
+.baris-tanggal {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spasi-menu);
+}
+
+.wadah-tanggal {
+  position: relative;
+}
+
+.tombol-tanggal {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spasi-1);
+  min-height: var(--tinggi-kecil);
+  padding: 0;
+  background: transparent;
+  border: 0;
+  font-size: var(--font-isi);
+  font-weight: 600;
+  color: var(--warna-teks);
+}
+
+/* Input tanggal bawaan browser: tidak terlihat, tetapi tetap bisa dibuka lewat tombol */
+.input-tanggal {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.blok-catatan {
+  margin-top: var(--spasi-3);
+}
+
+.textarea {
+  display: block;
+  width: 100%;
+  min-height: 68px;
+  padding: var(--spasi-menu) var(--spasi-2);
+  background: var(--warna-permukaan);
+  border: var(--garis) solid var(--warna-garis);
+  border-radius: var(--radius);
+  font-size: var(--font-isi);
+  line-height: 1.4;
+  color: var(--warna-teks);
+  resize: none;
+  overflow: hidden;
+}
+
+.baris-simpan {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--spasi-2);
+}
+
+.teks-kosong {
+  padding: var(--spasi-4) 0;
+  text-align: center;
+  color: var(--warna-teks-redup);
+}
+
+.daftar-siswa {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spasi-menu);
+  margin: var(--spasi-halaman) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.kartu-siswa {
+  padding: var(--spasi-2);
+}
+
+.kartu-atas {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spasi-menu);
+}
+
+.kartu-nama {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spasi-1);
+  min-width: 0;
+  font-size: var(--font-isi);
+  font-weight: 600;
+}
+
+.kartu-absen {
+  font-size: var(--font-kecil);
+  font-weight: 400;
+  color: var(--warna-teks-redup);
+}
+
+.kartu-status {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.kartu-jam {
+  font-size: var(--font-kecil);
+  color: var(--warna-teks-redup);
+}
+
+.kartu-pesan {
+  margin-top: var(--spasi-1);
+  overflow-wrap: anywhere;
+}
+
+.kartu-bawah {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--spasi-1);
+}
+
+/* ---------- Popup foto ---------- */
+.lapisan {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--warna-lapisan);
+  overscroll-behavior: contain;
+}
+
+/* Kotak foto rasio 3:4, lebar mengikuti layar tetapi tidak lebih tinggi dari layar */
+.popup-foto {
+  position: relative;
+  width: min(
+    calc(100% - 2 * var(--spasi-halaman)),
+    calc(var(--lebar-maks) - 2 * var(--spasi-halaman)),
+    calc((100dvh - 2 * var(--spasi-halaman)) * 0.75)
+  );
+  aspect-ratio: 3 / 4;
+  background: var(--warna-teks-redup);
+  border: var(--garis) solid var(--warna-permukaan);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.pengisi-foto {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--warna-oranye-tint);
+}
+
+.teks-gagal-foto {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spasi-halaman);
+  text-align: center;
+  color: var(--warna-permukaan);
+}
+
+.tombol-tutup-popup {
+  position: absolute;
+  top: var(--spasi-menu);
+  left: var(--spasi-menu);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--tinggi-kecil);
+  height: var(--tinggi-kecil);
+  padding: 0;
+  background: var(--warna-permukaan);
+  border: 0;
+  border-radius: 50%;
+  color: var(--warna-teks);
+}
+
+/* Halaman di belakang popup tidak bisa digulir */
+html.tanpa-gulir,
+html.tanpa-gulir body {
+  overflow: hidden;
+}
+
+/* ---------- Bar tombol kembali (ganti password) ---------- */
+.bar-kembali {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  height: var(--tinggi-header);
+  padding: 0 var(--spasi-halaman);
+}
+
+/* ---------- Teks bantu ---------- */
+.pesan-sukses {
+  margin-top: var(--spasi-2);
+  font-size: var(--font-sedang);
+  color: var(--warna-teks);
+}
+
+.pesan-error {
+  margin-top: var(--spasi-2);
+  font-size: var(--font-sedang);
+  color: var(--warna-merah);
+}
+
+.catatan-kecil {
+  margin-top: var(--spasi-2);
+  font-size: var(--font-kecil);
+  color: var(--warna-teks-redup);
+}
+
+/* ---------- Utilitas ---------- */
+.teks-redup {
+  color: var(--warna-teks-redup);
+}
+
+/* Teks hanya untuk pembaca layar */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
