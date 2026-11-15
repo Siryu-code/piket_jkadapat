@@ -7,15 +7,21 @@
 //   node scripts/create-users.js --wali 'Nama Wali,Panggilan'
 //
 // siswa.txt (di root repo), satu siswa per baris: nama,absen,panggilan
+//
+// Login memakai NAMA LENGKAP. Nama dirapikan otomatis ke format baku
+// (lihat _lib/nama.js) sebelum disimpan, dan nama yang kembar ditolak.
+// username (dari panggilan) tetap dibuat karena dibutuhkan tabel, tapi tidak dipakai untuk login.
 const fs = require("fs");
 const path = require("path");
 const bcrypt = require("bcryptjs");
 const { muatEnv } = require("./_env");
 const { passwordAcak } = require("./_password");
+const { normalisasiNama } = require("../netlify/functions/_lib/nama");
 
 const FILE_SISWA = path.join(__dirname, "..", "siswa.txt");
 const MAKS_ABSEN = 34;
-const MAKS_USERNAME = 50; // batas yang diterima endpoint login
+const MAKS_USERNAME = 50; // batas panjang username
+const MAKS_NAMA = 100; // batas panjang nama yang diterima endpoint login
 
 // ---------- argumen ----------
 function bacaArgumen(argv) {
@@ -47,7 +53,7 @@ function bacaWali(teks, kesalahan) {
   const bagian = teks.split(",").map((b) => b.trim());
   if (bagian.length !== 2 || bagian.some((b) => b === "")) {
     kesalahan.push(
-      `--wali: formatnya 'Nama,Panggilan' (dua bagian, keduanya terisi), yang diberikan: "${teks}"`,
+      `--wali: formatnya 'Nama,Panggilan' (dua bagian, keduanya terisi, nama tanpa gelar dan tanpa koma), yang diberikan: "${teks}"`,
     );
     return null;
   }
@@ -59,6 +65,7 @@ function bacaSiswa(kesalahan) {
   const daftar = [];
   const teks = fs.readFileSync(FILE_SISWA, "utf8").replace(/^\uFEFF/, ""); // buang BOM Notepad
   const absenDiFile = new Map(); // absen -> nomor baris pertama
+  const namaDiFile = new Map(); // nama rapi -> nomor baris pertama
 
   teks.split(/\r?\n/).forEach((mentah, i) => {
     const noBaris = i + 1;
@@ -93,8 +100,28 @@ function bacaSiswa(kesalahan) {
       );
       return;
     }
+    const namaRapi = normalisasiNama(nama);
+    if (namaRapi === "") {
+      kesalahan.push(
+        `siswa.txt baris ${noBaris}: nama "${nama}" tidak berisi huruf atau angka`,
+      );
+      return;
+    }
+    if (namaRapi.length > MAKS_NAMA) {
+      kesalahan.push(
+        `siswa.txt baris ${noBaris}: nama lebih dari ${MAKS_NAMA} karakter`,
+      );
+      return;
+    }
+    if (namaDiFile.has(namaRapi)) {
+      kesalahan.push(
+        `siswa.txt baris ${noBaris}: nama "${namaRapi}" kembar dengan baris ${namaDiFile.get(namaRapi)} (setelah dirapikan). Bedakan salah satunya dulu`,
+      );
+      return;
+    }
     absenDiFile.set(absen, noBaris);
-    daftar.push({ noBaris, nama, absen, panggilan });
+    namaDiFile.set(namaRapi, noBaris);
+    daftar.push({ noBaris, nama, namaRapi, absen, panggilan });
   });
 
   if (daftar.length === 0 && kesalahan.length === 0) {
@@ -154,19 +181,34 @@ async function utama() {
   const db = ambilDb();
   const { data: ada, error } = await db
     .from("users")
-    .select("username, absen, role");
+    .select("username, absen, role, nama");
   if (error) throw new Error("Gagal membaca tabel users: " + error.message);
 
   const terpakai = new Set(ada.map((u) => u.username));
   const absenDb = new Map(
     ada.filter((u) => u.role === "siswa").map((u) => [u.absen, u.username]),
   );
+  // Nama di database juga dirapikan dulu sebelum dibandingkan
+  const namaTerpakai = new Map(
+    ada.map((u) => [normalisasiNama(u.nama), u.username]),
+  );
   const akun = [];
 
   // Wali diproses lebih dulu supaya mendapat username polos
   if (wali) {
     const dasar = usernameDari(wali.panggilan);
-    if (!dasar) {
+    const namaRapi = normalisasiNama(wali.nama);
+    if (namaRapi === "") {
+      kesalahan.push(
+        `--wali: nama "${wali.nama}" tidak berisi huruf atau angka`,
+      );
+    } else if (namaRapi.length > MAKS_NAMA) {
+      kesalahan.push(`--wali: nama lebih dari ${MAKS_NAMA} karakter`);
+    } else if (namaTerpakai.has(namaRapi)) {
+      kesalahan.push(
+        `--wali: nama "${namaRapi}" sudah dipakai akun "${namaTerpakai.get(namaRapi)}" di database`,
+      );
+    } else if (!dasar) {
       kesalahan.push(
         `--wali: panggilan "${wali.panggilan}" tidak menghasilkan username (harus ada huruf atau angka)`,
       );
@@ -180,10 +222,12 @@ async function utama() {
       );
     } else {
       terpakai.add(dasar);
+      namaTerpakai.set(namaRapi, "(akun wali yang baru)");
       akun.push({
         role: "wali",
         username: dasar,
-        nama: wali.nama,
+        nama: namaRapi,
+        namaAsli: wali.nama,
         panggilan: wali.panggilan,
         absen: null,
       });
@@ -194,6 +238,12 @@ async function utama() {
     if (absenDb.has(s.absen)) {
       kesalahan.push(
         `siswa.txt baris ${s.noBaris}: absen ${s.absen} sudah dipakai akun "${absenDb.get(s.absen)}" di database`,
+      );
+      continue;
+    }
+    if (namaTerpakai.has(s.namaRapi)) {
+      kesalahan.push(
+        `siswa.txt baris ${s.noBaris}: nama "${s.namaRapi}" sudah dipakai akun "${namaTerpakai.get(s.namaRapi)}"`,
       );
       continue;
     }
@@ -219,10 +269,12 @@ async function utama() {
       continue;
     }
     terpakai.add(username);
+    namaTerpakai.set(s.namaRapi, username);
     akun.push({
       role: "siswa",
       username,
-      nama: s.nama,
+      nama: s.namaRapi,
+      namaAsli: s.nama,
       panggilan: s.panggilan,
       absen: s.absen,
     });
@@ -254,7 +306,7 @@ async function utama() {
     );
     console.log(`Akan dibuat ${akun.length} akun:\n`);
     cetakTabel(
-      ["role", "absen", "nama", "panggilan", "username"],
+      ["role", "absen", "nama (untuk login)", "panggilan", "username"],
       akun.map((a) => [
         a.role,
         a.absen === null ? "-" : a.absen,
@@ -263,6 +315,13 @@ async function utama() {
         a.username,
       ]),
     );
+    const berubah = akun.filter((a) => a.namaAsli.trim() !== a.nama);
+    if (berubah.length > 0) {
+      console.log(
+        `\n${berubah.length} nama dirapikan otomatis (periksa, ini yang harus diketik siswa):\n`,
+      );
+      berubah.forEach((a) => console.log(`  "${a.namaAsli}"  ->  "${a.nama}"`));
+    }
     console.log("\nSudah sesuai? Jalankan lagi tanpa --dry-run.\n");
     return;
   }
@@ -286,7 +345,7 @@ async function utama() {
   if (errSimpan) {
     if (errSimpan.code === "23505") {
       throw new Error(
-        "Ada username atau absen yang ternyata sudah dipakai. TIDAK ADA akun yang tersimpan. Jalankan lagi.",
+        "Ada nama, username, atau absen yang ternyata sudah dipakai. TIDAK ADA akun yang tersimpan. Jalankan lagi.",
       );
     }
     throw new Error(
@@ -297,16 +356,17 @@ async function utama() {
   }
 
   console.log(
-    `\n${akun.length} akun berhasil dibuat. Password HANYA ditampilkan sekali ini, salin sekarang:\n`,
+    `\n${akun.length} akun berhasil dibuat. Login memakai NAMA LENGKAP + password.`,
   );
+  console.log("Password HANYA ditampilkan sekali ini, salin sekarang:\n");
   cetakTabel(
-    ["role", "absen", "nama", "username", "password"],
+    ["role", "absen", "nama (untuk login)", "password", "username"],
     akun.map((a) => [
       a.role,
       a.absen === null ? "-" : a.absen,
       a.nama,
-      a.username,
       a.password,
+      a.username,
     ]),
   );
 
@@ -317,9 +377,9 @@ async function utama() {
     `akun-baru-${stempelWaktu()}.csv`,
   );
   const isiCsv = [
-    "username,password,role,absen,nama,panggilan",
+    "nama,password,role,absen,panggilan,username",
     ...akun.map((a) =>
-      [a.username, a.password, a.role, a.absen, a.nama, a.panggilan]
+      [a.nama, a.password, a.role, a.absen, a.panggilan, a.username]
         .map(selCsv)
         .join(","),
     ),

@@ -4,7 +4,7 @@
 const KODE_ERROR = {
   TIDAK_LOGIN: [401, "Silakan login lagi"],
   DILARANG: [403, "Kamu tidak punya akses"],
-  KREDENSIAL_SALAH: [401, "Username atau password salah"],
+  KREDENSIAL_SALAH: [401, "Nama atau password salah. Periksa penulisan nama."],
   PASSWORD_LAMA_SALAH: [403, "Password lama salah"],
   PASSWORD_BARU_INVALID: [
     400,

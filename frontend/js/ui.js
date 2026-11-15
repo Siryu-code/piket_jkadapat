@@ -201,7 +201,7 @@ export function formatJam(jam) {
 // ==========================================================
 export function buatHeader() {
   const header = buatElemen("header", "header");
-  const judul = buatElemen("span", "header-judul", "Piket Kelas");
+  const judul = buatElemen("span", "header-judul", "Piket JKADAPAT");
 
   const wadah = buatElemen("div", "menu-wadah");
 
