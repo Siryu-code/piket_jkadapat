@@ -1,0 +1,9 @@
+[build]
+  publish = "frontend"
+  functions = "netlify/functions"
+
+# Semua panggilan /api/... diarahkan ke fungsi dengan nama yang sama
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200

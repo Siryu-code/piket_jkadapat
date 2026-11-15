@@ -73,7 +73,7 @@ tombolSimpan.addEventListener("click", async () => {
     bersihkanError(pesanCatatan);
 
     const tanggal = tanggalSaatIni;
-    const teks = inputCatatan.value;
+    const teks = inputCatatan.value.trim();
     const hasil = await waliNote(tanggal, teks);
 
     if (!hasil.ok) {
@@ -81,7 +81,11 @@ tombolSimpan.addEventListener("click", async () => {
       return;
     }
     // Perbarui nilai tersimpan (kecuali tanggal sudah diganti saat menunggu)
-    if (tanggal === tanggalSaatIni) catatanTersimpan = teks;
+    if (tanggal === tanggalSaatIni) {
+      catatanTersimpan = teks;
+      inputCatatan.value = teks;
+      sesuaikanTinggi();
+    }
   });
   // Dipanggil setelah kunci dilepas supaya tombol kembali redup bila sudah tersimpan
   perbaruiTombolSimpan();

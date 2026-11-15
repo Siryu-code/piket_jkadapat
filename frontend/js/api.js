@@ -6,7 +6,7 @@
 
 // true  = pakai data tiruan (tanpa jaringan)
 // false = pakai fetch sungguhan ke /api/*
-export const USE_MOCK = true;
+export const USE_MOCK = false;
 
 const JEDA_MOCK_MS = 400;
 const HALAMAN_LOGIN = "login.html";
