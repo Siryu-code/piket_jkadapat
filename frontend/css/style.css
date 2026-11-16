@@ -466,6 +466,10 @@ a {
   background: var(--warna-kamera);
 }
 
+.video-cermin {
+  transform: scaleX(-1);
+}
+
 .kontrol-kamera {
   position: absolute;
   right: 0;

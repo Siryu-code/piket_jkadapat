@@ -196,6 +196,7 @@ async function bukaTampilanKamera() {
   tampilkanView("kamera");
 
   const hasil = await bukaKamera(videoKamera);
+  aturCermin(hasil);
   if (!hasil.ok && hasil.kode !== "DIBATALKAN")
     tampilkanGalatKamera(hasil.kode);
 }
@@ -232,6 +233,7 @@ tombolKembaliKamera.addEventListener("click", kembaliKeHome);
 tombolTukar.addEventListener("click", () => {
   jalankanDenganKunci(tombolTukar, async () => {
     const hasil = await tukarKamera(videoKamera);
+    aturCermin(hasil);
     if (!hasil.ok && hasil.kode !== "DIBATALKAN")
       tampilkanGalatKamera(hasil.kode);
   });
@@ -249,6 +251,11 @@ tombolPotret.addEventListener("click", () => {
   bersihkanError(pesanKirim);
   tampilkanView("foto");
 });
+
+// Kamera depan ('user') dicerminkan pada pratinjau saja
+function aturCermin(hasil) {
+  videoKamera.classList.toggle('video-cermin', hasil.ok && hasil.mode === 'user');
+}
 
 // ==========================================================
 // FOTO + KIRIM

@@ -45,7 +45,7 @@ export async function bukaKamera(video, modeBaru = mode) {
     mode = modeBaru;
     video.srcObject = stream;
     await video.play().catch(() => {}); // autoplay biasanya sudah jalan
-    return { ok: true };
+    return { ok: true, mode };
   } catch (galat) {
     return { ok: false, kode: galat.name || "GALAT" };
   }
