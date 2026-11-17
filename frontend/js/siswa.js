@@ -81,6 +81,7 @@ let keadaanLokasi = null; // null (sembunyi) | 'aktif' | 'error'
 let pesanLokasiError = "";
 let fotoSaatIni = null; // { dataUrl, base64 }, hanya di memori
 let sedangKirim = false;
+let modeKamera = 'environment'; // kamera yang sedang dipakai: 'environment' atau 'user'
 
 // ---------- Pindah view tanpa memuat ulang halaman ----------
 // nama: 'home' | 'kamera' | 'foto'
@@ -247,6 +248,7 @@ tombolPotret.addEventListener("click", () => {
   hentikanKamera(videoKamera);
   fotoSaatIni = foto;
   gambarFoto.src = foto.dataUrl;
+  gambarFoto.classList.toggle("video-cermin", modeKamera === "user"); // cerminkan tampilan saja
   inputPesan.value = "";
   bersihkanError(pesanKirim);
   tampilkanView("foto");
@@ -254,6 +256,7 @@ tombolPotret.addEventListener("click", () => {
 
 // Kamera depan ('user') dicerminkan pada pratinjau saja
 function aturCermin(hasil) {
+  if (hasil.ok) modeKamera = hasil.mode;
   videoKamera.classList.toggle('video-cermin', hasil.ok && hasil.mode === 'user');
 }
 
